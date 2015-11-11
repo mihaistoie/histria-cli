@@ -1,5 +1,5 @@
 /// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
-namespace Phoenix {
+namespace Histria {
     export module utils {
         var
             _copyArray = function(ss: any[], recursive): any[] {
