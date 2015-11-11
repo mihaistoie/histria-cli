@@ -12,12 +12,10 @@
   "repository": {},
   "bugs": {},
   "devDependencies": {
-    "chai": "latest",
     "gulp": "latest",
     "gulp-typescript": "latest",
     "typescript": "latest",
     "tsd": "latest",
-    "bower": "latest",
-    "mocha": "latest"
+    "bower": "latest"
   }
 }
