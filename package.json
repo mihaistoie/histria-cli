@@ -1,0 +1,23 @@
+{
+  "name": "histria-cli",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "Histria Web Toolkit",
+  "author": {
+    "name": "Mihai STOIE"
+  },
+  "keywords": [
+    "Histria"
+  ],
+  "repository": {},
+  "bugs": {},
+  "devDependencies": {
+    "chai": "latest",
+    "gulp": "latest",
+    "gulp-typescript": "latest",
+    "typescript": "latest",
+    "tsd": "latest",
+    "bower": "latest",
+    "mocha": "latest"
+  }
+}

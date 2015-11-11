@@ -1,0 +1,29 @@
+{
+  "name": "histria-cli",
+  "version": "0.0.1",
+  "authors": [
+    "mihaistoie <mihaistoie@gmail.com>"
+  ],
+  "description": "Histria Web Toolkit",
+  "keywords": [
+    "Histria"
+  ],
+  "main": "dist/js/histria.js",
+  "license": "MIT",
+  "ignore": [
+    "src",
+    "node_modules",
+    "bower_components",
+    "test",
+    ".settings",
+    ".svn",
+    ".gitignore",
+	  ".tscache",
+    "tsd.json",
+    "jsconfig.json",
+    "Gruntfile.js"
+  ],
+  "devDependencies": {
+    "es6-promise": "latest"
+  }
+}
