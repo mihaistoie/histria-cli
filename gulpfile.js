@@ -6,7 +6,8 @@ gulp.task('default', function () {
     return gulp.src('src/**/*.ts')
         .pipe(ts({
             noImplicitAny: false,
-            out: 'output.js'
+            out: 'output.js',
+            target: 'ES5' 
         }))
         .pipe(gulp.dest('dist/js'));
 });

@@ -7,21 +7,21 @@ namespace Histria {
 			Warning: 1,
 			Success: 2
 		}
-		export class Alerts {
+		export class ModelErrors {
 			private _propName: string;
 			private _parent: any;
-			private _alerts: { severity: number, message: string }[];
+			private errors: { severity: number, message: string }[];
 			private _forwardToParent: boolean;
-			constructor(parent, propName, forwardToParent) {
+			constructor(parent: any, propName: string, value: { severity: number, message: string }[], forwardToParent: boolean) {
 				var that = this;
-				that._alerts = [];
+				that.errors = value || [];
 				that._propName = propName;
 				that._parent = parent;
 				that._forwardToParent = forwardToParent;
 			}
 			public destroy() {
 				var that = this;
-				that._alerts = null;
+				that.errors = [];
 				that._parent = null;
 			}
 			private notify() {
@@ -31,38 +31,38 @@ namespace Histria {
 			}
 			public clear(notify: boolean): boolean {
 				var that = this;
-				if (that._alerts.length) {
-					that._alerts.length = 0;
+				if (that.errors.length) {
+					that.errors.length = 0;
 					if (notify) that.notify();
 					return true;
 				}
 				return false;
 			}
-			public hasAlerts(): boolean {
+			public hasErrors(): boolean {
 				let that = this;
-				return that._alerts && that._alerts.length ? true : false;
+				return that.errors && that.errors.length ? true : false;
 			}
-			public addAlerts(alerts: any, add?: boolean) {
+			public addErrors(alerts: any, add?: boolean) {
 				let that = this;
 				if (that._forwardToParent) {
 					if (that._parent && that._parent.addErrors)
 						that._parent.addErrors(alerts, add);
-				} else if (add || !_utils.equals(that._alerts, alerts)) {
-					that._alerts = alerts || [];
+				} else if (add || !_utils.equals(that.errors, alerts)) {
+					that.errors = alerts || [];
 					that.notify();
 				}
 			}
 			public addError(message: string) {
 				let that = this;
-				that.addAlerts([{ severity: AlertType.Error, message: message }], true);
+				that.addErrors([{ severity: AlertType.Error, message: message }], true);
 			}
 			public addSuccess(message: string) {
 				let that = this;
-				that.addAlerts([{ severity: AlertType.Success, message: message, timeout: 2 }], true);
+				that.addErrors([{ severity: AlertType.Success, message: message, timeout: 2 }], true);
 			}
 			public addWarning(message: string) {
 				let that = this;
-				that.addAlerts([{ severity: AlertType.Warning, message: message, timeout: 2 }], true);
+				that.addErrors([{ severity: AlertType.Warning, message: message, timeout: 2 }], true);
 			}
 
 		}
