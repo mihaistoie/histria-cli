@@ -16,11 +16,11 @@ namespace Histria {
 			_isArray = function(prop): boolean {
 				return prop.type === "array";
 			},
-			_enumProps = function(schema: any, cb: (value: any, isObject: boolean, isArray: boolean) => void): void {
+			_enumProps = function(schema: any, cb: (propertyName: string, value: any, isObject: boolean, isArray: boolean) => void): void {
 				Object.keys(schema.properties).forEach(function(propName: string) {
 					let item = schema.properties[propName];
 					if (_isRefObject(item) || _isRefArray(item)) return;
-					cb(item, _isObject(item), _isArray(item));
+					cb(propName, item, _isObject(item), _isArray(item));
 				});
 
 			};
