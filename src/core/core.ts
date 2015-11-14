@@ -61,11 +61,47 @@ namespace Histria {
             },
             _createID = function(): string {
                 return "H" + _p8(false) + _p8(false) + _p8(false) + _p8(false);
+            },
+            _eq = function(o1: any, o2: any): boolean {
+                if (o1 !== o2) {
+                    if (Array.isArray(o1)) {
+                        if (!Array.isArray(o2)) return false;
+                        return _arrayEquals(o1, o2);
+                    } else if (typeof o1 === 'object') {
+                        if (typeof o2 !== 'object') return false;
+                        return _objectsEquals(o1, o2);
+                    } else
+                        return false;
+                }
+                return true;
+            },
+            _objectsEquals = function(ia1: any, ia2: any): boolean {
+                let la1 = Object.keys(ia1), la2 = Object.keys(ia2);
+                if (la1.length !== la2.length) return false;
+                for (let i = 0, len = la1.length; i < len; i++) {
+                    let p = la1[i];
+                    if (la2[i] !== p) return false;
+                    if (!_eq(ia1[p], ia1[p])) return false;
+                }
+                return true;
+            },
+            _arrayEquals = function(a1: any[], a2: any[]): boolean {
+                if (a1.length !== a2.length) return false;
+                for (let i = 0, len = a1.length; i < len; i++) {
+                    if (!_eq(a1[i], a2[i])) return false;
+                }
+                return true;
+            },
+            _equals = function(o1, o2): boolean {
+                if (!o1 || !o2) return o1 === o2;
+                return _eq(o1, o2);
+
             };
         export var createPromise = _createPromise;
         export var extend = _extend;
         export var uuid = _genUuid;
         export var allocId = _createID;
+        export var equals = _equals;
 
     }
 }
