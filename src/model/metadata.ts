@@ -22,8 +22,8 @@ namespace Histria {
 			}
 			protected init() {
 				let that = this;
-				that._meta.hidden = that._meta.hidden || false;
-				that._meta.disabled = that._meta.disabled || false;
+				that._meta.$hidden = that._meta.$hidden || false;
+				that._meta.$disabled = that._meta.$disabled || false;
 			}
 			protected notify(propertyName: string) {
 				let that = this;
@@ -33,82 +33,91 @@ namespace Histria {
 			public meta() {
 				return this._meta;
 			}
-			public get hidden(): boolean {
-				return this._meta.hidden;
+			public get $hidden(): boolean {
+				return this._meta.$hidden;
 			}
 
-			public set hidden(value: boolean) {
+			public set $hidden(value: boolean) {
 				let that = this;
-				if (that._meta.hidden != value) {
-					that._meta.hidden = value;
-					that.notify('hidden');
+				if (that._meta.$hidden != value) {
+					that._meta.$hidden = value;
+					that.notify('$hidden');
 				}
 			}
-			public get disabled(): boolean {
-				return this._meta.disabled;
+			public get $disabled(): boolean {
+				return this._meta.$disabled;
 			}
 
-			public set disabled(value: boolean) {
+			public set $disabled(value: boolean) {
 				let that = this;
-				if (that._meta.disabled != value) {
-					that._meta.disabled = value;
-					that.notify('disabled');
+				if (that._meta.$disabled != value) {
+					that._meta.$disabled = value;
+					that.notify('$disabled');
 				}
 			}
 
 		};
-		export class MetaLinks extends BaseMeta {
+		export class MetaLink extends BaseMeta {
 			constructor(parent: any, propName: string, value: any) {
 				super(parent, propName, value);
 			}
 		}
-		export class MetaProperties extends BaseMeta {
-			private _errors: ModelErrors;
+		export class MetaObject extends BaseMeta {
+			private _$errors: ModelErrors;
 			constructor(parent: any, propName: string, value: any) {
 				super(parent, propName, value);
 				let that = this;
-				that._errors = new ModelErrors(parent, propName, that._meta.errors, false);
+				that._$errors = new ModelErrors(parent, propName, that._meta.$errors, false);
 			}
-
 			protected init() {
 				super.init();
 				let that = this;
-				that._meta.mandatory = that._meta.mandatory || false;
-				that._meta.readOnly = that._meta.readOnly || false;
-				that._meta.errors = that._meta.errors || [];
+				that._meta.$errors = that._meta.$errors || [];
 			}
 			public destroy() {
 				var that = this;
-				if (that._errors) {
+				if (that._$errors) {
 					that.destroy();
 					that = null;
 				}
 				super.destroy();
 			}
-			public get mandatory(): boolean {
-				return this._meta.mandatory;
+			public get $errors(): ModelErrors {
+				return this._$errors;
+			}
+		}
+		export class MetaProperty extends MetaObject {
+			constructor(parent: any, propName: string, value: any) {
+				super(parent, propName, value);
 			}
 
-			public set mandatory(value: boolean) {
+			protected init() {
+				super.init();
 				let that = this;
-				if (that._meta.mandatory != value) {
-					that._meta.mandatory = value;
-					that.notify('mandatory');
-				}
+				that._meta.$mandatory = that._meta.$mandatory || false;
+				that._meta.$readOnly = that._meta.$readOnly || false;
 			}
-			public get readOnly(): boolean {
-				return this._meta.readOnly;
+			public get $mandatory(): boolean {
+				return this._meta.$mandatory;
 			}
 
-			public set readOnly(value: boolean) {
+			public set $mandatory(value: boolean) {
 				let that = this;
-				if (that._meta.readOnly != value) {
-					that._meta.readOnly = value;
-					that.notify('readOnly');
+				if (that._meta.$mandatory != value) {
+					that._meta.$mandatory = value;
+					that.notify('$mandatory');
 				}
 			}
-			public get errors(): ModelErrors {
-				return this._errors;
+			public get $readOnly(): boolean {
+				return this._meta.$readOnly;
+			}
+
+			public set $readOnly(value: boolean) {
+				let that = this;
+				if (that._meta.$readOnly != value) {
+					that._meta.$readOnly = value;
+					that.notify('$readOnly');
+				}
 			}
 		}
 	}

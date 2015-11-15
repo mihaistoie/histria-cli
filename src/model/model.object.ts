@@ -1,14 +1,30 @@
 /// <reference path="../core/core.ts" />
 /// <reference path="./schema.ts" />
+/// <reference path="./metadata.ts" />
 namespace Histria {
 	export module Model {
 		var
 			_utils = utils,
 			_schema = Schema;
 		export class Model {
-			public isNull: boolean;
+			public isNullOrUndefined: boolean;
 			protected frozen: boolean;
+			private _meta: MetaObject;
+			private _propertyName: string;
 			private _schema: any;
+			constructor(parent: any, propertyName: string, value) {
+				let that = this;
+				that._propertyName  = propertyName;
+			}
+			destroy() {
+				let that = this;
+				if (that._meta) {
+					that._meta.destroy();
+					that._meta = null;
+				}
+
+			}
+
 			private _freeze(cb: () => void) {
 				let that = this;
 				let ofv = that.frozen;
@@ -21,16 +37,32 @@ namespace Histria {
 			}
 			private _init(value: any) {
 				let that = this;
-				that.isNull = value === null || value === undefined;
+				that.isNullOrUndefined = value === null || value === undefined;
 				value = value || {};
 				value.$ = value.$ || {};
 				value.$.$actions = value.$actions || {};
+				value.$.$errors = value.$errors || {};
+				if (that.isNullOrUndefined) 
+					value.$.$disabled = true;
+				
+				if (that._meta) that._meta.destroy();
+				that._meta = new MetaObject(that, that._propertyName, value.$);
+				
+				
 				_schema.enumProperties(that._schema, function(propertyName, item, isObject, isArray) {
 					let val = value[propertyName];
 					if (isArray && !val) {
 						val = [];
 						value[propertyName] = val;
 					}
+					if (isObject) {
+						
+					} else if (isArray) {
+						
+					} else {
+						that[propertyName] = val;
+					}
+					
 				});
 			}
 			/*
