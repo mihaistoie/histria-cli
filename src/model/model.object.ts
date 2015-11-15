@@ -9,19 +9,28 @@ namespace Histria {
 		export class Model {
 			public isNullOrUndefined: boolean;
 			protected frozen: boolean;
-			private _meta: MetaObject;
+			private _parent: any;
+			private _addMeta: boolean;
+			private _meta: MetaProperty;
 			private _propertyName: string;
 			private _schema: any;
+			public static IsObject: boolean = true;
 			constructor(parent: any, propertyName: string, value) {
 				let that = this;
-				that._propertyName  = propertyName;
+				that._parent = parent;
+				that._propertyName = propertyName;
+				if (that._parent && that._parent.isObject) {
+					that._meta = that._parent.$[propertyName];
+				}
 			}
 			destroy() {
 				let that = this;
 				if (that._meta) {
-					that._meta.destroy();
+					if (that._parent && that._parent.isObject)
+						that._meta.destroy();
 					that._meta = null;
 				}
+				that._parent  = null;
 
 			}
 
@@ -42,13 +51,14 @@ namespace Histria {
 				value.$ = value.$ || {};
 				value.$.$actions = value.$actions || {};
 				value.$.$errors = value.$errors || {};
-				if (that.isNullOrUndefined) 
+				if (that._addMeta) {
+				if (that.isNullOrUndefined)
 					value.$.$disabled = true;
-				
-				if (that._meta) that._meta.destroy();
-				that._meta = new MetaObject(that, that._propertyName, value.$);
-				
-				
+					if (that._meta) that._meta.destroy();
+					that._meta = new MetaProperty(that, that._propertyName, value.$);
+				}
+
+
 				_schema.enumProperties(that._schema, function(propertyName, item, isObject, isArray) {
 					let val = value[propertyName];
 					if (isArray && !val) {
@@ -56,13 +66,13 @@ namespace Histria {
 						value[propertyName] = val;
 					}
 					if (isObject) {
-						
+
 					} else if (isArray) {
-						
+
 					} else {
 						that[propertyName] = val;
 					}
-					
+
 				});
 			}
 			/*
