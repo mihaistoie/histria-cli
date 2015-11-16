@@ -6,32 +6,60 @@ namespace Histria {
 		var
 			_utils = utils,
 			_schema = Schema;
+			
 		export class Model {
 			public isNullOrUndefined: boolean;
 			protected frozen: boolean;
 			private _parent: any;
 			private _addMeta: boolean;
-			private _meta: MetaProperty;
+			private _actions: any;
+			private _meta: any;
+			
+			private _objectMeta: MetaProperty;
+			private _metaInParent: boolean;
 			private _propertyName: string;
 			private _schema: any;
 			public static IsObject: boolean = true;
-			constructor(parent: any, propertyName: string, value) {
+			
+			constructor(parent: any, propertyName: string,  schema: any, value) {
 				let that = this;
 				that._parent = parent;
 				that._propertyName = propertyName;
-				if (that._parent && that._parent.isObject) {
-					that._meta = that._parent.$[propertyName];
+				that._schema = schema;
+				// take the object state from parent
+				that._metaInParent = that._parent && that._parent.isObject;
+				  
+				if (that._metaInParent) {
+					that._objectMeta = that._parent.$[propertyName];
+				} else {
+				//	that._objectMeta = new value = that._checkValue(value)
+ 
 				}
 			}
+			private _checkValue(value: any): any {
+				let that = this;
+				that.isNullOrUndefined = value === null || value === undefined;
+				value = value || {};
+				value.$ = value.$ || {};
+				return value;
+			}
+			
 			destroy() {
 				let that = this;
-				if (that._meta) {
-					if (that._parent && that._parent.isObject)
-						that._meta.destroy();
-					that._meta = null;
+				if (!that._metaInParent)  {
+					if (that._objectMeta) {
+						that._objectMeta.destroy();
+					}
 				}
+				that._objectMeta = null;
 				that._parent  = null;
 
+			}
+			public get $(): any {
+				return this._meta;
+			}
+			public get $actions(): any {
+				return this._actions;
 			}
 
 			private _freeze(cb: () => void) {
@@ -47,10 +75,14 @@ namespace Histria {
 			private _init(value: any) {
 				let that = this;
 				that.isNullOrUndefined = value === null || value === undefined;
+				
+				
 				value = value || {};
 				value.$ = value.$ || {};
 				value.$.$actions = value.$actions || {};
 				value.$.$errors = value.$errors || {};
+				
+				
 				if (that._addMeta) {
 				if (that.isNullOrUndefined)
 					value.$.$disabled = true;
@@ -132,3 +164,9 @@ namespace Histria {
 	}
 
 }
+
+
+/*
+OB
+
+*/
