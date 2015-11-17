@@ -14,6 +14,7 @@ namespace Histria {
 			private _addMeta: boolean;
 			private _actions: any;
 			private _meta: any;
+			private _model: any;
 			
 			private _objectMeta: MetaProperty;
 			private _metaInParent: boolean;
@@ -72,25 +73,37 @@ namespace Histria {
 					that.frozen = ofv;
 				}
 			}
+			private _initFromSchema(schema) {
+				let that = this;
+				if (!that._model) return;
+				let states = (schema.states ? $.extend(true, {}, schema.states) : null),
+					links = (schema.links ? $.extend(true, {}, schema.links) : null),
+					errors = (schema.errors ? $.extend(true, {}, schema.errors) : null);
+				_schema.enumProperties(that._schema, function(propertyName, item, isObject, isArray) {					
+					_createProp(that, npropertyNameame);
+					_createStateProp(that, propertyName, states ? states[propertyName] : null);
+					_createErrorProp(that, propertyName, errors ? errors[propertyName] : null);
+				});
+				if (schema.links) {
+					Object.keys(schema.links).forEach((name) => { _createStateLinks(that, name, links ? links[name] : null); });
+				}
+				// root error
+				if (!that._parent) {
+					that.$errors.$ = new _observable.Errors(that, '$', [], false);
+				}
+			}
+			
 			private _init(value: any) {
 				let that = this;
 				that.isNullOrUndefined = value === null || value === undefined;
-				
-				
 				value = value || {};
 				value.$ = value.$ || {};
-				value.$.$actions = value.$actions || {};
-				value.$.$errors = value.$errors || {};
-				
 				
 				if (that._addMeta) {
 				if (that.isNullOrUndefined)
-					value.$.$disabled = true;
 					if (that._meta) that._meta.destroy();
 					that._meta = new MetaProperty(that, that._propertyName, value.$);
 				}
-
-
 				_schema.enumProperties(that._schema, function(propertyName, item, isObject, isArray) {
 					let val = value[propertyName];
 					if (isArray && !val) {
@@ -101,11 +114,11 @@ namespace Histria {
 
 					} else if (isArray) {
 
-					} else {
-						that[propertyName] = val;
-					}
+					} 
 
 				});
+				that._model = value;
+				
 			}
 			/*
 						_setModel(value, frozen) {

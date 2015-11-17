@@ -10,6 +10,10 @@ namespace Histria {
 			_isRefArray = function(prop): boolean {
 				return prop.type === "ref/array";
 			},
+			_ignore = function(prop): boolean {
+				return ["ref/array", "ref/object"].indexOf(prop.type) >= 0;
+			},
+			
 			_isObject = function(prop): boolean {
 				return prop.type === "object";
 			},
@@ -19,7 +23,7 @@ namespace Histria {
 			_enumProps = function(schema: any, cb: (propertyName: string, value: any, isObject: boolean, isArray: boolean) => void): void {
 				Object.keys(schema.properties).forEach(function(propName: string) {
 					let item = schema.properties[propName];
-					if (_isRefObject(item) || _isRefArray(item)) return;
+					if (_ignore(item)) return;
 					cb(propName, item, _isObject(item), _isArray(item));
 				});
 
