@@ -6,54 +6,99 @@ namespace Histria {
 		var
 			_utils = utils,
 			_schema = Schema;
-			
+		var
+			_createProperty = function(obj, propertyName) {
+				Object.defineProperty(obj, propertyName, {
+					get: function() {
+						let that = this;
+						let  ref = that._associations[propertyName];
+						if (ref) {
+							// is an association
+							if (ref.isUndefined)
+								return undefined;
+							if (ref.isNull)
+								return null;
+							//return model object	
+							return ref;
+						} else
+							return that._model[propertyName];
+					},
+					set: function(value) {
+						let that = this;
+						let old = that._model[propertyName];
+						if (old !== value) {
+							if (that._beforeChange(propertyName, oldValue, value)) {
+								that._model[propertyName] = value;
+								let schema = that._schema.properties[propertyName];
+								if (_su.isCompositionRef(schema)) {
+									that._setRefChild(propertyName, oldValue, value, {});
+									that._notifyChanged(propertyName, oldValue, value, "propchange", {}, true);
+									that.notifyStateChanged(propertyName, {});
+								} else if (_su.isCompositionList(schema)) {
+									that._setListChild(propertyName, oldValue, value, "propchange", {});
+									that._notifyChanged(propertyName, oldValue, value, "propchange", {}, true);
+									that.notifyStateChanged(propertyName, {});
+								} else {
+									that._notifyChanged(propertyName, oldValue, value, "propchange", {}, true);
+								}
+
+							}
+						}
+					},
+					enumerable: true
+				});
+			};
+
 		export class Model {
-			public isNullOrUndefined: boolean;
+			public  isNull: boolean;
+			public  isUndefined: boolean;
 			protected frozen: boolean;
 			private _parent: any;
 			private _addMeta: boolean;
 			private _actions: any;
 			private _meta: any;
 			private _model: any;
-			
+			private _associations: any;
+
 			private _objectMeta: MetaProperty;
 			private _metaInParent: boolean;
 			private _propertyName: string;
 			private _schema: any;
 			public static IsObject: boolean = true;
-			
-			constructor(parent: any, propertyName: string,  schema: any, value) {
+
+			constructor(parent: any, propertyName: string, schema: any, value) {
 				let that = this;
 				that._parent = parent;
 				that._propertyName = propertyName;
 				that._schema = schema;
 				// take the object state from parent
 				that._metaInParent = that._parent && that._parent.isObject;
-				  
+
 				if (that._metaInParent) {
 					that._objectMeta = that._parent.$[propertyName];
 				} else {
-				//	that._objectMeta = new value = that._checkValue(value)
+					//	that._objectMeta = new value = that._checkValue(value)
  
 				}
 			}
 			private _checkValue(value: any): any {
 				let that = this;
-				that.isNullOrUndefined = value === null || value === undefined;
+				that._null = value === null;
+				that._undefined = value === undefined;
 				value = value || {};
 				value.$ = value.$ || {};
 				return value;
 			}
-			
+
 			destroy() {
 				let that = this;
-				if (!that._metaInParent)  {
+				if (!that._metaInParent) {
 					if (that._objectMeta) {
 						that._objectMeta.destroy();
 					}
 				}
 				that._objectMeta = null;
-				that._parent  = null;
+				that._parent = null;
 
 			}
 			public get $(): any {
@@ -79,8 +124,8 @@ namespace Histria {
 				let states = (schema.states ? $.extend(true, {}, schema.states) : null),
 					links = (schema.links ? $.extend(true, {}, schema.links) : null),
 					errors = (schema.errors ? $.extend(true, {}, schema.errors) : null);
-				_schema.enumProperties(that._schema, function(propertyName, item, isObject, isArray) {					
-					_createProp(that, npropertyNameame);
+				_schema.enumProperties(that._schema, function(propertyName, item, isObject, isArray) {
+					_createProp(that, propertyName);
 					_createStateProp(that, propertyName, states ? states[propertyName] : null);
 					_createErrorProp(that, propertyName, errors ? errors[propertyName] : null);
 				});
@@ -92,16 +137,16 @@ namespace Histria {
 					that.$errors.$ = new _observable.Errors(that, '$', [], false);
 				}
 			}
-			
+
 			private _init(value: any) {
 				let that = this;
 				that.isNullOrUndefined = value === null || value === undefined;
 				value = value || {};
 				value.$ = value.$ || {};
-				
+
 				if (that._addMeta) {
-				if (that.isNullOrUndefined)
-					if (that._meta) that._meta.destroy();
+					if (that.isNullOrUndefined)
+						if (that._meta) that._meta.destroy();
 					that._meta = new MetaProperty(that, that._propertyName, value.$);
 				}
 				_schema.enumProperties(that._schema, function(propertyName, item, isObject, isArray) {
@@ -114,11 +159,11 @@ namespace Histria {
 
 					} else if (isArray) {
 
-					} 
+					}
 
 				});
 				that._model = value;
-				
+
 			}
 			/*
 						_setModel(value, frozen) {

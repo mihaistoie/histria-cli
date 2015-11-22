@@ -29,6 +29,8 @@ namespace Histria {
 
 			};
 		export const enumProperties = _enumProps;
+		export const 
+		
 	}
 
 }
