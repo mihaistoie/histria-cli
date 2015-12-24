@@ -2,37 +2,37 @@
 namespace Histria {
     export module utils {
         var
-            _copyArray = function(ss: any[], recursive): any[] {
-                let res = new Array(ss.length);
-                ss.forEach(function(item, index) {
+            _copyArray = function(src: any[], recursive): any[] {
+                let res = new Array(src.length);
+                src.forEach(function(item, index) {
                     if (recursive && Array.isArray(item)) {
                         res[index] = _copyArray(item, true);
                     } else if (recursive && typeof item === 'object') {
-                        res[index] = _copyObject(item, true);
+                        res[index] = _copyObject(null, item, true);
                     } else
                         res[index] = item;
                 });
                 return res;
             },
-            _copyObject = function(src: any, recursive): any {
-                let res = {};
+            _copyObject = function(dst: any, src: any, recursive): any {
+                let res = dst || {};
                 Object.keys(src).forEach(function(pn) {
                     let item = src[pn];
                     if (recursive && Array.isArray(item)) {
                         res[pn] = _copyArray(item, true);
                     } else if (recursive && typeof item === 'object') {
-                        res[pn] = _copyObject(item, true);
+                        res[pn] = _copyObject(null, item, true);
                     } else
                         res[pn] = item;
                 });
                 return res;
             },
-            _extend = function(dst: any, src: any, recursive?: boolean): any {
+            _extend = function(dst: any, src: any, recursive: boolean): any {
                 if (!src) return src;
                 if (Array.isArray(src)) {
                     return _copyArray(src, recursive);
                 } else if (typeof src === 'object') {
-                    return _copyObject(src, recursive);
+                    return _copyObject(dst, src, recursive);
                 } else
                     return src;
             },

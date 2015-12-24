@@ -1,170 +1,129 @@
 /// <reference path="../core/core.ts" />
 /// <reference path="./schema.ts" />
 /// <reference path="./metadata.ts" />
+/// <reference path="./model.utils.ts" />
 namespace Histria {
-	export module Model {
-		var
-			_utils = utils,
-			_schema = Schema;
-		var
-			_createProperty = function(obj, propertyName) {
-				Object.defineProperty(obj, propertyName, {
-					get: function() {
-						let that = this;
-						let  ref = that._associations[propertyName];
-						if (ref) {
-							// is an association
-							if (ref.isUndefined)
-								return undefined;
-							if (ref.isNull)
-								return null;
-							//return model object	
-							return ref;
-						} else
-							return that._model[propertyName];
-					},
-					set: function(value) {
-						let that = this;
-						let old = that._model[propertyName];
-						if (old !== value) {
-							if (that._beforeChange(propertyName, oldValue, value)) {
-								that._model[propertyName] = value;
-								let schema = that._schema.properties[propertyName];
-								if (_su.isCompositionRef(schema)) {
-									that._setRefChild(propertyName, oldValue, value, {});
-									that._notifyChanged(propertyName, oldValue, value, "propchange", {}, true);
-									that.notifyStateChanged(propertyName, {});
-								} else if (_su.isCompositionList(schema)) {
-									that._setListChild(propertyName, oldValue, value, "propchange", {});
-									that._notifyChanged(propertyName, oldValue, value, "propchange", {}, true);
-									that.notifyStateChanged(propertyName, {});
-								} else {
-									that._notifyChanged(propertyName, oldValue, value, "propchange", {}, true);
-								}
+    export module Model {
+        var
+            _utils = utils,
+            _schema = Schema;
+        
+        export class Model {
+            public isNull: boolean;
+            public isUndefined: boolean;
+            protected frozen: boolean;
+            private _parent: any;
+            private _addMeta: boolean;
+            private _actions: any;
+            private _meta: any;
+            private _model: any;
+            private _associations: any;
 
-							}
-						}
-					},
-					enumerable: true
-				});
-			};
+            private _objectMeta: MetaProperty;
+            private _metaInParent: boolean;
+            private _propertyName: string;
+            private _schema: any;
+            public static IsObject: boolean = true;
 
-		export class Model {
-			public  isNull: boolean;
-			public  isUndefined: boolean;
-			protected frozen: boolean;
-			private _parent: any;
-			private _addMeta: boolean;
-			private _actions: any;
-			private _meta: any;
-			private _model: any;
-			private _associations: any;
+            constructor(parent: any, propertyName: string, schema: any, value) {
+                let that = this;
+                that._parent = parent;
+                that._propertyName = propertyName;
+                that._schema = schema;
+                // take the object state from parent
+                that._metaInParent = that._parent && that._parent.isObject;
 
-			private _objectMeta: MetaProperty;
-			private _metaInParent: boolean;
-			private _propertyName: string;
-			private _schema: any;
-			public static IsObject: boolean = true;
-
-			constructor(parent: any, propertyName: string, schema: any, value) {
-				let that = this;
-				that._parent = parent;
-				that._propertyName = propertyName;
-				that._schema = schema;
-				// take the object state from parent
-				that._metaInParent = that._parent && that._parent.isObject;
-
-				if (that._metaInParent) {
-					that._objectMeta = that._parent.$[propertyName];
-				} else {
-					//	that._objectMeta = new value = that._checkValue(value)
+                if (that._metaInParent) {
+                    that._objectMeta = that._parent.$[propertyName];
+                } else {
+                    //	that._objectMeta = new value = that._checkValue(value)
  
-				}
-			}
-			private _checkValue(value: any): any {
-				let that = this;
-				that._null = value === null;
-				that._undefined = value === undefined;
-				value = value || {};
-				value.$ = value.$ || {};
-				return value;
-			}
+                }
+            }
+            private _checkValue(value: any): any {
+                let that = this;
+                that.isNull = value === null;
+                that.isUndefined = value === undefined;
+                value = value || {};
+                value.$ = value.$ || {};
+                return value;
+            }
 
-			destroy() {
-				let that = this;
-				if (!that._metaInParent) {
-					if (that._objectMeta) {
-						that._objectMeta.destroy();
-					}
-				}
-				that._objectMeta = null;
-				that._parent = null;
+            destroy() {
+                let that = this;
+                if (!that._metaInParent) {
+                    if (that._objectMeta) {
+                        that._objectMeta.destroy();
+                    }
+                }
+                that._objectMeta = null;
+                that._parent = null;
 
-			}
-			public get $(): any {
-				return this._meta;
-			}
-			public get $actions(): any {
-				return this._actions;
-			}
+            }
+            public get $(): any {
+                return this._meta;
+            }
+            public get $actions(): any {
+                return this._actions;
+            }
 
-			private _freeze(cb: () => void) {
-				let that = this;
-				let ofv = that.frozen;
-				that.frozen = true;
-				try {
-					cb();
-				} finally {
-					that.frozen = ofv;
-				}
-			}
-			private _initFromSchema(schema) {
-				let that = this;
-				if (!that._model) return;
-				let states = (schema.states ? $.extend(true, {}, schema.states) : null),
-					links = (schema.links ? $.extend(true, {}, schema.links) : null),
-					errors = (schema.errors ? $.extend(true, {}, schema.errors) : null);
-				_schema.enumProperties(that._schema, function(propertyName, item, isObject, isArray) {
-					_createProp(that, propertyName);
-					_createStateProp(that, propertyName, states ? states[propertyName] : null);
-					_createErrorProp(that, propertyName, errors ? errors[propertyName] : null);
-				});
-				if (schema.links) {
-					Object.keys(schema.links).forEach((name) => { _createStateLinks(that, name, links ? links[name] : null); });
-				}
-				// root error
-				if (!that._parent) {
-					that.$errors.$ = new _observable.Errors(that, '$', [], false);
-				}
-			}
+            private _freeze(cb: () => void) {
+                let that = this;
+                let ofv = that.frozen;
+                that.frozen = true;
+                try {
+                    cb();
+                } finally {
+                    that.frozen = ofv;
+                }
+            }
+            private _initFromSchema(schema) {
+                let that = this;
+                if (!that._model) return;
+                let states = (schema.states ? _utils.extend(null, schema.states) : null),
+                    links = (schema.links ? $.extend(true, {}, schema.links) : null),
+                    errors = (schema.errors ? $.extend(true, {}, schema.errors) : null);
+                _schema.enumProperties(that._schema, function(propertyName, item, isObject, isArray) {
+                    _createProp(that, propertyName);
+                    _createStateProp(that, propertyName, states ? states[propertyName] : null);
+                    _createErrorProp(that, propertyName, errors ? errors[propertyName] : null);
+                });
+                if (schema.links) {
+                    Object.keys(schema.links).forEach((name) => { _createStateLinks(that, name, links ? links[name] : null); });
+                }
+                // root error
+                if (!that._parent) {
+                    that.$errors.$ = new _observable.Errors(that, '$', [], false);
+                }
+            }
 
-			private _init(value: any) {
-				let that = this;
-				that.isNullOrUndefined = value === null || value === undefined;
-				value = value || {};
-				value.$ = value.$ || {};
+            private _init(value: any) {
+                let that = this;
+                that.isNullOrUndefined = value === null || value === undefined;
+                value = value || {};
+                value.$ = value.$ || {};
 
-				if (that._addMeta) {
-					if (that.isNullOrUndefined)
-						if (that._meta) that._meta.destroy();
-					that._meta = new MetaProperty(that, that._propertyName, value.$);
-				}
-				_schema.enumProperties(that._schema, function(propertyName, item, isObject, isArray) {
-					let val = value[propertyName];
-					if (isArray && !val) {
-						val = [];
-						value[propertyName] = val;
-					}
-					if (isObject) {
+                if (that._addMeta) {
+                    if (that.isNullOrUndefined)
+                        if (that._meta) that._meta.destroy();
+                    that._meta = new MetaProperty(that, that._propertyName, value.$);
+                }
+                _schema.enumProperties(that._schema, function(propertyName, item, isObject, isArray) {
+                    let val = value[propertyName];
+                    if (isArray && !val) {
+                        val = [];
+                        value[propertyName] = val;
+                    }
+                    if (isObject) {
 
-					} else if (isArray) {
+                    } else if (isArray) {
 
-					}
+                    }
 
-				});
-				that._model = value;
+                });
+                that._model = value;
 
-			}
+            }
 			/*
 						_setModel(value, frozen) {
 							let that = this;
@@ -217,9 +176,9 @@ namespace Histria {
 							that._model = value;
 							that.frozen = ofv;
 						} */
-		}
+        }
 
-	}
+    }
 
 }
 

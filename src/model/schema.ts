@@ -14,11 +14,14 @@ namespace Histria {
 				return ["ref/array", "ref/object"].indexOf(prop.type) >= 0;
 			},
 			
-			_isObject = function(prop): boolean {
+			_isObject = function(prop: any): boolean {
 				return prop.type === "object";
 			},
-			_isArray = function(prop): boolean {
+			_isArray = function(prop: any): boolean {
 				return prop.type === "array";
+			},
+			_isArrayOfObjects = function(prop: any): boolean {
+				return prop.type === "array" && prop.items.type === "object";
 			},
 			_enumProps = function(schema: any, cb: (propertyName: string, value: any, isObject: boolean, isArray: boolean) => void): void {
 				Object.keys(schema.properties).forEach(function(propName: string) {
@@ -29,7 +32,9 @@ namespace Histria {
 
 			};
 		export const enumProperties = _enumProps;
-		export const 
+        export const isObject = _isObject;
+        export const isArrayOfObjects = _isArrayOfObjects;
+		
 		
 	}
 
