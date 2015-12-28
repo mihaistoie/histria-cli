@@ -1,4 +1,7 @@
 /// <reference path="../core/core.ts" />
+/// <reference path="./model.interfaces.ts" />
+
+
 namespace Histria {
     export module Model {
         let _utils = utils;
@@ -7,27 +10,32 @@ namespace Histria {
             Warning: 1,
             Success: 2
         }
-        export class ModelErrors {
+        export class Errors {
             private _propName: string;
-            private _parent: any;
+            private _owner: ModelObject;
             private _errors: { severity: number, message: string }[];
-            private _forwardToParent: boolean;
-            constructor(parent: any, propName: string, value: { severity: number, message: string }[], forwardToParent: boolean) {
+            constructor(owner: ModelObject, propName: string, value: { severity: number, message: string }[]) {
                 var that = this;
                 that._errors = value || [];
                 that._propName = propName;
-                that._parent = parent;
-                that._forwardToParent = forwardToParent;
+                that._owner = owner;
             }
             public destroy() {
                 var that = this;
-                that._errors = [];
-                that._parent = null;
+                that._errors = null;
+                that._owner = null;
             }
             private notify() {
                 var that = this;
-                if (that._parent && that._parent.notifyMetaDataChanged)
-                    that._parent.notifyMetaDataChanged(that._propName + '.$errors', null);
+                that._owner.notifyMetaDataChanged(that._propName + '.$errors', null);
+            }
+            private _addErrors(alerts: { message: string, severity?: number }[], add?: boolean) {
+                let that = this;
+                if (add || !_utils.equals(that._errors, alerts)) {
+                    that._errors.length = 0;
+                    that._errors = _utils.extend(that._errors, alerts || [], true);
+                    that.notify();
+                }
             }
             public clear(notify: boolean): boolean {
                 var that = this;
@@ -42,28 +50,18 @@ namespace Histria {
                 let that = this;
                 return that._errors && that._errors.length ? true : false;
             }
-            public addErrors(alerts: { message: string, severity?: number }[], add?: boolean) {
-                let that = this;
-                if (that._forwardToParent) {
-                    if (that._parent && that._parent.addErrors)
-                        that._parent.addErrors(alerts, add);
-                } else if (add || !_utils.equals(that._errors, alerts)) {
-                    that._errors.length = 0;
-                    _utils.extend(that._errors, alerts || []);
-                    that.notify();
-                }
-            }
+            
             public addError(message: string) {
                 let that = this;
-                that.addErrors([{ severity: AlertType.Error, message: message }], true);
+                that._addErrors([{ severity: AlertType.Error, message: message }], true);
             }
             public addSuccess(message: string) {
                 let that = this;
-                that.addErrors([{ severity: AlertType.Success, message: message }], true);
+                that._addErrors([{ severity: AlertType.Success, message: message }], true);
             }
             public addWarning(message: string) {
                 let that = this;
-                that.addErrors([{ severity: AlertType.Warning, message: message }], true);
+                that._addErrors([{ severity: AlertType.Warning, message: message }], true);
             }
 
         }

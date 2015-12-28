@@ -1,15 +1,17 @@
 /// <reference path="../core/core.ts" />
 /// <reference path="./model.errors.ts" />
+/// <reference path="./model.interfaces.ts" />
+
 namespace Histria {
     export module Model {
 		let _utils = utils;
 		export class BaseMeta {
-			private _parent: any;
+			private _owner: ModelObject;
 			protected _meta: any;
 			private _propName: string;
-			constructor(parent: any, propName: string, value: any) {
+			constructor(owner: ModelObject, propName: string, value: any) {
 				var that = this;
-				that._parent = parent;
+				that._owner = owner;
 				that._propName = propName;
 				that._meta = value || {};
 				that.init();
@@ -17,7 +19,7 @@ namespace Histria {
 			public destroy() {
 				var that = this;
 				that._meta = null;
-				that._parent = null;
+				that._owner = null;
 
 			}
 			protected init() {
@@ -27,8 +29,8 @@ namespace Histria {
 			}
 			protected notify(propertyName: string) {
 				let that = this;
-				if (that._parent && that._parent.notifyMetaDataChanged)
-					that._parent.notifyMetaDataChanged(that._propName + '.' + propertyName, {});
+				if (that._owner)
+					that._owner.notifyMetaDataChanged(that._propName + '.' + propertyName, {});
 			}
 			public meta() {
 				return this._meta;
@@ -58,16 +60,16 @@ namespace Histria {
 
 		};
 		export class MetaLink extends BaseMeta {
-			constructor(parent: any, propName: string, value: any) {
-				super(parent, propName, value);
+			constructor(owner: ModelObject, propName: string, value: any) {
+				super(owner, propName, value);
 			}
 		}
 		export class MetaObject extends BaseMeta {
-			private _$errors: ModelErrors;
-			constructor(parent: any, propName: string, value: any) {
-				super(parent, propName, value);
+			private _$errors: Errors;
+			constructor(owner: ModelObject, propName: string, value: any) {
+				super(owner, propName, value);
 				let that = this;
-				that._$errors = new ModelErrors(parent, propName, that._meta.$errors, false);
+				that._$errors = new Errors(owner, propName, that._meta.$errors);
 			}
 			protected init() {
 				super.init();
@@ -82,13 +84,13 @@ namespace Histria {
 				}
 				super.destroy();
 			}
-			public get $errors(): ModelErrors {
+			public get $errors(): Errors {
 				return this._$errors;
 			}
 		}
 		export class MetaProperty extends MetaObject {
-			constructor(parent: any, propName: string, value: any) {
-				super(parent, propName, value);
+			constructor(owner: ModelObject, propName: string, value: any) {
+				super(owner, propName, value);
 			}
 
 			protected init() {

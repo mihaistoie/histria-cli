@@ -2,39 +2,69 @@
 /// <reference path="./schema.ts" />
 /// <reference path="./metadata.ts" />
 /// <reference path="./model.utils.ts" />
+/// <reference path="./model.interfaces.ts" />
+
 namespace Histria {
     export module Model {
         var
             _utils = utils,
             _schema = Schema;
-        
-        export class Model {
+
+        export class BaseModel implements ModelObject {
             public isNull: boolean;
             public isUndefined: boolean;
             protected frozen: boolean;
-            private _parent: any;
+            protected _owner: any;
+            //is true for one-to-one composition and for items of an array (one-to-many)
+            protected _metaInParent: boolean;
+            // is not empty for compositions (one-to-one and one-to-many)
+            // for items of an array (one-to-many) _propertyName === '$item'
+            protected _propertyName: string;
+            
+            public isArray(): boolean { return false; }
+            public get owner(): ModelObject {
+                return <ModelObject>this._owner;
+            }
+            public addErrors(alerts: { message: string, severity?: number }[], add?: boolean): void {
+            }
+            public notifyMetaDataChanged(propertyName: string, params: any): void {
+                let that = this, parent = that.owner;
+                if (parent) {
+                    let pn = that._propertyName  + (propertyName ? '.' + propertyName : '');
+                    if (parent.isArray()) {
+                        params = params || {};
+                        
+                        
+                    }
+                    
+                    that.owner.notifyMetaDataChanged(pn, params);
+                } else {
+                    
+                }
+                
+            }
+        }
+
+        export class Model extends BaseModel {
             private _addMeta: boolean;
             private _actions: any;
             private _meta: any;
             private _model: any;
             private _associations: any;
-
             private _objectMeta: MetaProperty;
-            private _metaInParent: boolean;
-            private _propertyName: string;
             private _schema: any;
-            public static IsObject: boolean = true;
+            public IsObject: boolean = true;
 
-            constructor(parent: any, propertyName: string, schema: any, value) {
+            constructor(owner: any, propertyName: string, schema: any, value) {
                 let that = this;
-                that._parent = parent;
+                that._owner = owner;
                 that._propertyName = propertyName;
                 that._schema = schema;
                 // take the object state from parent
-                that._metaInParent = that._parent && that._parent.isObject;
+                that._metaInParent = that._owner && that._owner.isObject;
 
                 if (that._metaInParent) {
-                    that._objectMeta = that._parent.$[propertyName];
+                    that._objectMeta = that._owner.$[propertyName];
                 } else {
                     //	that._objectMeta = new value = that._checkValue(value)
  
@@ -57,7 +87,7 @@ namespace Histria {
                     }
                 }
                 that._objectMeta = null;
-                that._parent = null;
+                that._owner = null;
 
             }
             public get $(): any {
@@ -92,7 +122,7 @@ namespace Histria {
                     Object.keys(schema.links).forEach((name) => { _createStateLinks(that, name, links ? links[name] : null); });
                 }
                 // root error
-                if (!that._parent) {
+                if (!that._owner) {
                     that.$errors.$ = new _observable.Errors(that, '$', [], false);
                 }
             }

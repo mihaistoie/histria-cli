@@ -33,11 +33,11 @@ namespace Histria {
                                 if (_schema.isObject(schema)) {
                                     that._setRefChild(propertyName, old, value, {});
                                     that._notifyChanged(propertyName, old, value, "propchange", {}, true);
-                                    that.notifyStateChanged(propertyName, {});
+                                    that.notifyMetaDataChanged(propertyName, {});
                                 } else if (_schema.isArrayOfObjects(schema)) {
                                     that._setListChild(propertyName, old, value, "propchange", {});
                                     that._notifyChanged(propertyName, old, value, "propchange", {}, true);
-                                    that.notifyStateChanged(propertyName, {});
+                                    that.notifyMetaDataChanged(propertyName, {});
                                 } else {
                                     that._notifyChanged(propertyName, old, value, "propchange", {}, true);
                                 }
