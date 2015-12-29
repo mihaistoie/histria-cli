@@ -30,7 +30,7 @@ namespace Histria {
 			protected notify(propertyName: string) {
 				let that = this;
 				if (that._owner)
-					that._owner.notifyMetaDataChanged(that._propName + '.' + propertyName, {});
+					that._owner.fireMetaDataChanged(that._propName + '.' + propertyName, {});
 			}
 			public meta() {
 				return this._meta;

@@ -27,7 +27,7 @@ namespace Histria {
             }
             private notify() {
                 var that = this;
-                that._owner.notifyMetaDataChanged(that._propName + '.$errors', null);
+                that._owner.fireMetaDataChanged(that._propName + '.$errors', null);
             }
             private _addErrors(alerts: { message: string, severity?: number }[], add?: boolean) {
                 let that = this;
