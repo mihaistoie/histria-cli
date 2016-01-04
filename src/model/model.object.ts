@@ -19,8 +19,6 @@ namespace Histria {
             public isUndefined: boolean;
             // universal  uid
             public uuid: string;
-            public onStateChange: (propertyName: string, params: any) => void;
-            public onChange: (propertyName: string, operation: string, params: any) => void;
             // if frozen not fire events
             protected frozen: boolean;
             protected _owner: any;
@@ -29,7 +27,6 @@ namespace Histria {
             // is empty only for the root owner
             // for items of an array (one-to-many) _propertyName === '$item' ||  '$newitem'
             protected _propertyName: string;
-
             protected getFullPath(): string {
                 let that = this;
                 if (that._cachePath)
@@ -67,6 +64,8 @@ namespace Histria {
                         that.onStateChange(propertyName, params);
                 }
             }
+            public onStateChange: (propertyName: string, params: any) => void;
+            public onChange: (propertyName: string, operation: string, params: any) => void;
         }
         /*
                 export class Model extends BaseModel {
