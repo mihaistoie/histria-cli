@@ -1,72 +1,65 @@
-/// <reference path="../core/core.ts" />
-/// <reference path="./schema.ts" />
-/// <reference path="./metadata.ts" />
-/// <reference path="./model.utils.ts" />
-/// <reference path="./model.interfaces.ts" />
 
-namespace Histria {
-    export module Model {
-        var
-            _utils = utils,
-            _schema = Schema;
+import * as utils from '../core/utils';
+import {ModelObject}  from './model.interfaces';
 
-        export class BaseModel implements ModelObject {
-            private _cachePath: string;
-            
-            //is null ?
-            public isNull: boolean;
-            // is undefined ?
-            public isUndefined: boolean;
-            // universal  uid
-            public uuid: string;
-            // if frozen not fire events
-            protected frozen: boolean;
-            protected _owner: any;
-            //is true for one-to-one composition and for items of an array (one-to-many)
-            protected _metaInParent: boolean;
-            // is empty only for the root owner
-            // for items of an array (one-to-many) _propertyName === '$item' ||  '$newitem'
-            protected _propertyName: string;
-            protected getFullPath(): string {
-                let that = this;
-                if (that._cachePath)
-                    return that._cachePath;
-                let segments = [];
-                let parent: BaseModel = that;
-                while (parent && parent._propertyName) {
-                    segments.unshift(parent._propertyName);
-                    parent = <BaseModel>parent._owner;
-                }
-                that._cachePath = segments.join('.');
-                return that._cachePath;
-            }
+export class BaseModel implements ModelObject {
+    private _cachePath: string;
 
-            public isArray(): boolean { return false; }
-
-            public get owner(): ModelObject {
-                return <ModelObject>this._owner;
-            }
-            public addErrors(alerts: { message: string, severity?: number }[], add?: boolean): void {
-            }
-
-            public fireMetaDataChanged(propertyName: string, params: any): void {
-                let that = this, parent = that.owner;
-                if (that.frozen) return;
-                if (parent) {
-                    let pn = that._propertyName + (propertyName ? '.' + propertyName : '');
-                    if (parent.isArray()) {
-                        params = params || {};
-                        params[that.getFullPath()] = that.uuid;
-                    }
-                    that.owner.fireMetaDataChanged(pn, params);
-                } else {
-                    if (that.onStateChange)
-                        that.onStateChange(propertyName, params);
-                }
-            }
-            public onStateChange: (propertyName: string, params: any) => void;
-            public onChange: (propertyName: string, operation: string, params: any) => void;
+    //is null ?
+    public isNull: boolean;
+    // is undefined ?
+    public isUndefined: boolean;
+    // universal  uid
+    public uuid: string;
+    // if frozen not fire events
+    protected frozen: boolean;
+    protected _owner: any;
+    //is true for one-to-one composition and for items of an array (one-to-many)
+    protected _metaInParent: boolean;
+    // is empty only for the root owner
+    // for items of an array (one-to-many) _propertyName === '$item' ||  '$newitem'
+    protected _propertyName: string;
+    protected getFullPath(): string {
+        let that = this;
+        if (that._cachePath)
+            return that._cachePath;
+        let segments: string[] = [];
+        let parent: BaseModel = that;
+        while (parent && parent._propertyName) {
+            segments.unshift(parent._propertyName);
+            parent = <BaseModel>parent._owner;
         }
+        that._cachePath = segments.join('.');
+        return that._cachePath;
+    }
+
+    public isArray(): boolean { return false; }
+
+    public get owner(): ModelObject {
+        return <ModelObject>this._owner;
+    }
+    public addErrors(alerts: { message: string, severity?: number }[], add?: boolean): void {
+    }
+
+    public fireMetaDataChanged(propertyName: string, params: any): void {
+        let that = this, parent = that.owner;
+        if (that.frozen) return;
+        if (parent) {
+            let pn = that._propertyName + (propertyName ? '.' + propertyName : '');
+            if (parent.isArray()) {
+                params = params || {};
+                params[that.getFullPath()] = that.uuid;
+            }
+            that.owner.fireMetaDataChanged(pn, params);
+        } else {
+            if (that.onStateChange)
+                that.onStateChange(propertyName, params);
+        }
+    }
+    public onStateChange: (propertyName: string, params: any) => void;
+    public onChange: (propertyName: string, operation: string, params: any) => void;
+}
+
         /*
                 export class Model extends BaseModel {
                     private _addMeta: boolean;
@@ -229,12 +222,12 @@ namespace Histria {
                                     that._model = value;
                                     that.frozen = ofv;
                                 } */
-                        
+
         // }
 
-    }
 
-}
+
+
 
 
 /*

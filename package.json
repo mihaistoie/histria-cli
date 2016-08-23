@@ -19,7 +19,7 @@
     "gulp-rename": "latest",
     "gulp-concat": "latest",
     "typescript": "latest",
-    "tsd": "latest",
+    "typings": "latest",
     "bower": "latest"
   }
 }

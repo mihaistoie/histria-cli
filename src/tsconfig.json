@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "outDir": "../dist/js/",
+        "noImplicitAny": true,
+        "noFallthroughCasesInSwitch": true,
+        "rootDir": ".",
+        "sourceMap": true,
+        "inlineSources": true,
+        "target": "es5"
+    },
+    "exclude": [
+        "node_modules",
+        "typings-test"
+    ]
+}
