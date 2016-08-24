@@ -10,7 +10,7 @@ var concat = require('gulp-concat');
 
 gulp.task('default', function () {
     var tsProject = ts.createProject(path.resolve('./tsconfig.json'));
-    var tsResult = gulp.src(path.resolve('src/**/*.ts')).pipe(ts(tsProject));
+    var tsResult = gulp.src(path.resolve('src/index.ts')).pipe(ts(tsProject));
 
     return merge([
         tsResult.js.pipe(concat("histria.js"))
