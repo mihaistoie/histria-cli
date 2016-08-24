@@ -1,17 +1,17 @@
 
 import * as utils from '../core/utils';
-import {ModelObject}  from './model.interfaces';
-import {Errors}  from './model.errors';
+import {ModelObject}  from './interfaces';
+import {Errors}  from './errors';
 
 export class BaseMeta {
 	private _owner: ModelObject;
-	protected _meta: any;
+	protected _meta: { $hidden: boolean, $disabled: boolean, $readOnly?: boolean, $mandatory?: boolean, $errors?: { severity: number, message: string }[] };
 	private _propName: string;
 	constructor(owner: ModelObject, propName: string, value: any) {
 		var that = this;
 		that._owner = owner;
 		that._propName = propName;
-		that._meta = value || {};
+		that._meta = value || { $hidden: false, $disabled: false };
 		that.init();
 	}
 	public destroy() {
@@ -36,10 +36,9 @@ export class BaseMeta {
 	public get $hidden(): boolean {
 		return this._meta.$hidden;
 	}
-
 	public set $hidden(value: boolean) {
 		let that = this;
-		if (that._meta.$hidden != value) {
+		if (that._meta.$hidden !== value) {
 			that._meta.$hidden = value;
 			that.notify('$hidden');
 		}
@@ -50,8 +49,8 @@ export class BaseMeta {
 
 	public set $disabled(value: boolean) {
 		let that = this;
-		if (that._meta.$disabled != value) {
-			that._meta.$disabled = value;
+		if (that._meta.$disabled !== value) {
+			that._meta.$disabled == value;
 			that.notify('$disabled');
 		}
 	}
@@ -77,8 +76,8 @@ export class MetaObject extends BaseMeta {
 	public destroy() {
 		var that = this;
 		if (that._$errors) {
-			that.destroy();
-			that = null;
+			that._$errors.destroy();
+			that._$errors = null;
 		}
 		super.destroy();
 	}
@@ -103,7 +102,7 @@ export class MetaProperty extends MetaObject {
 
 	public set $mandatory(value: boolean) {
 		let that = this;
-		if (that._meta.$mandatory != value) {
+		if (that._meta.$mandatory !== value) {
 			that._meta.$mandatory = value;
 			that.notify('$mandatory');
 		}
@@ -114,7 +113,7 @@ export class MetaProperty extends MetaObject {
 
 	public set $readOnly(value: boolean) {
 		let that = this;
-		if (that._meta.$readOnly != value) {
+		if (that._meta.$readOnly !== value) {
 			that._meta.$readOnly = value;
 			that.notify('$readOnly');
 		}

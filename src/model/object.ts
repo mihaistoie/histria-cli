@@ -1,6 +1,6 @@
 
 import * as utils from '../core/utils';
-import {ModelObject}  from './model.interfaces';
+import {ModelObject}  from './interfaces';
 
 export class BaseModel implements ModelObject {
     private _cachePath: string;
@@ -45,7 +45,7 @@ export class BaseModel implements ModelObject {
         let that = this, parent = that.owner;
         if (that.frozen) return;
         if (parent) {
-            let pn = that._propertyName + (propertyName ? '.' + propertyName : '');
+            let pn = that._propertyName + (propertyName ? ('.' + propertyName) : '');
             if (parent.isArray()) {
                 params = params || {};
                 params[that.getFullPath()] = that.uuid;

@@ -18,8 +18,15 @@
     "gulp-sourcemaps": "latest",
     "gulp-rename": "latest",
     "gulp-concat": "latest",
-    "typescript": "latest",
+    "merge2": "latest",
+    "typescript": "2.x.x",
     "typings": "latest",
+    "chai": "latest",
+    "mocha": "latest",
     "bower": "latest"
+  },
+  "scripts": {
+    "pretest": "tsc test/modules/utils.test.ts --module commonjs",
+    "test": "mocha test/**/*.test.js"
   }
 }

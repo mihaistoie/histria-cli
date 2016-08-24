@@ -1,5 +1,6 @@
 
 /// <reference path="../../typings/index.d.ts" />
+
 var
     _copyArray = function (src: any[], recursive: boolean): any[] {
         let res = new Array(src.length);
@@ -27,13 +28,13 @@ var
         return res;
     },
     _extend = function (dst: any, src: any, recursive: boolean): any {
-        if (!src) return src;
+        if (!src) return dst;
         if (Array.isArray(src)) {
             return _copyArray(src, recursive);
         } else if (typeof src === 'object') {
             return _copyObject(dst, src, recursive);
         } else
-            return src;
+            return dst;
     },
     _formatByPosition = function (...args: any[]): string {
         let arg0 = args[0] + '';
@@ -93,14 +94,17 @@ var
         return true;
     },
     _equals = function (o1: any, o2: any): boolean {
-        if (!o1 || !o2) return o1 === o2;
+        if (o1 === o2) return true;
+        if (!o1 || !o2) return false;
         return _eq(o1, o2);
 
     };
+
 export var createPromise = _createPromise;
 export var extend = _extend;
 export var uuid = _genUuid;
 export var allocId = _createID;
 export var equals = _equals;
+
 
 

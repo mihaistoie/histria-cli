@@ -18,12 +18,13 @@
     ".settings",
     ".svn",
     ".gitignore",
-	  ".tscache",
-    "tsd.json",
+    ".tscache",
+    "typings.json",
     "jsconfig.json",
     "Gruntfile.js"
   ],
   "devDependencies": {
-    "es6-promise": "latest"
+    "es6-promise": "latest",
+    "jquery": ">= 3.0.0"
   }
 }

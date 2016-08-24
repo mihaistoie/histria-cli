@@ -1,6 +1,6 @@
 
 import * as utils from '../core/utils';
-import {ModelObject}  from './model.interfaces';
+import {ModelObject}  from './interfaces';
 
 
 export const AlertType = {

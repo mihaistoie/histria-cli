@@ -3,18 +3,19 @@
         "declaration": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "module": "commonjs",
+        "module": "system",
         "moduleResolution": "node",
         "outDir": "../dist/js/",
         "noImplicitAny": true,
         "noFallthroughCasesInSwitch": true,
         "rootDir": ".",
+        "declaration": true,
         "sourceMap": true,
         "inlineSources": true,
         "target": "es5"
     },
     "exclude": [
         "node_modules",
-        "typings-test"
+        "test"
     ]
 }
