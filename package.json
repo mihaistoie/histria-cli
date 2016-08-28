@@ -12,18 +12,23 @@
   "repository": {},
   "bugs": {},
   "devDependencies": {
+    "bower": "latest",
+    "chai": "latest",
+    "del": "latest",
+    "merge2": "latest",
+    "mocha": "latest",
     "gulp": "latest",
     "gulp-typescript": "latest",
     "gulp-uglify": "latest",
     "gulp-sourcemaps": "latest",
     "gulp-rename": "latest",
     "gulp-concat": "latest",
-    "merge2": "latest",
     "typescript": "2.x.x",
     "typings": "latest",
-    "chai": "latest",
-    "mocha": "latest",
-    "bower": "latest"
+    "ts-loader": "latest",
+    "webpack": "latest",
+    "webpack-config": "latest",
+    "webpack-stream": "latest"
   },
   "scripts": {
     "pretest": "tsc test/modules/utils.test.ts --module commonjs",

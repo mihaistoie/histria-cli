@@ -1,5 +1,5 @@
 
 import * as utilsLib from './core/utils';
-export namespace Histria {
-    export var utils = utilsLib;
-}
+import * as modelLib from './model/object';
+export var utils = utilsLib;
+export var model = modelLib;
