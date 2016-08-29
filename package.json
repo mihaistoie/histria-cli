@@ -24,14 +24,11 @@
     "gulp-rename": "latest",
     "gulp-concat": "latest",
     "typescript": "2.x.x",
-    "typings": "latest",
-    "ts-loader": "latest",
-    "webpack": "latest",
-    "webpack-config": "latest",
-    "webpack-stream": "latest"
+    "typings": "latest"
   },
   "scripts": {
-    "pretest": "tsc test/modules/utils.test.ts --module commonjs",
-    "test": "mocha test/**/*.test.js"
+    "pretest": "tsc test/modules/utils.test.ts --module commonjs --target es5",
+    "test": "mocha test/**/*.test.js",
+    "posttest": "gulp clean"
   }
 }

@@ -1,5 +1,5 @@
 /// <reference path="../../typings/index.d.ts" />
-import * as utils  from '../../src/core/utils';
+import {utils}  from '../../src/index';
 import * as chai  from 'chai';
 
 describe("Utils", function () {

@@ -8,13 +8,13 @@ var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var rename = require('gulp-rename');
 var concat = require('gulp-concat');
-var webpack = require('webpack-stream');
 
 gulp.task('clean', function () {
     return del([
         'lib/',
         './index.js',
-        './src/**/*.js'
+        './src/**/*.js',
+        './test/**/*.js'
     ]);
 
 });
@@ -25,9 +25,9 @@ gulp.task('default', ['clean'], function () {
 
     return merge([
         tsResult.js
-            
+		    .pipe(concat('histria.js'))
             .pipe(gulp.dest('dist/js'))
-            .pipe(rename("histria.min.js"))
+            .pipe(rename('histria.min.js'))
             .pipe(sourcemaps.init())
             .pipe(uglify())
             .pipe(sourcemaps.write('./'))
