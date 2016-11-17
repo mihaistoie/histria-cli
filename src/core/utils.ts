@@ -18,9 +18,9 @@ var
         let res = dst || {};
         Object.keys(src).forEach(function (pn) {
             let item = src[pn];
-            if (recursive && Array.isArray(item)) {
+            if (recursive && item && Array.isArray(item)) {
                 res[pn] = _copyArray(item, true);
-            } else if (recursive && typeof item === 'object') {
+            } else if (recursive && item && typeof item === 'object') {
                 res[pn] = _copyObject(null, item, true);
             } else
                 res[pn] = item;
