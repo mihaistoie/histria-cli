@@ -4,18 +4,11 @@
         "declaration": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "module": "commonjs",
         "moduleResolution": "node",
         "noImplicitAny": true,
-        "noFallthroughCasesInSwitch": true,
         "rootDir": ".",
         "sourceMap": true,
-        "inlineSources": true,
         "outDir": "./lib",
         "target": "es5"
-    },
-    "exclude": [
-        "node_modules",
-        "test"
-    ]
+    }
 }

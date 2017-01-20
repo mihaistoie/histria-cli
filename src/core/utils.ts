@@ -1,6 +1,4 @@
 
-/// <reference path="../../typings/index.d.ts" />
-
 var
     _copyArray = function (src: any[], recursive: boolean): any[] {
         let res = new Array(src.length);
