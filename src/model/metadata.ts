@@ -5,13 +5,13 @@ import {Errors}  from './errors';
 
 export class BaseMeta {
 	private _owner: ModelObject;
-	protected _meta: { $hidden: boolean, $disabled: boolean, $readOnly?: boolean, $mandatory?: boolean, $errors?: { severity: number, message: string }[] };
+	protected _meta: any;
 	private _propName: string;
 	constructor(owner: ModelObject, propName: string, value: any) {
 		var that = this;
 		that._owner = owner;
 		that._propName = propName;
-		that._meta = value || { $hidden: false, $disabled: false };
+		that._meta = value || { isHidden: false, isDisabled: false };
 		that.init();
 	}
 	public destroy() {
@@ -22,8 +22,8 @@ export class BaseMeta {
 	}
 	protected init() {
 		let that = this;
-		that._meta.$hidden = that._meta.$hidden || false;
-		that._meta.$disabled = that._meta.$disabled || false;
+		that._meta.isHidden = that._meta.isHidden || false;
+		that._meta.isDisabled = that._meta.isDisabled || false;
 	}
 	protected notify(propertyName: string) {
 		let that = this;
@@ -33,29 +33,31 @@ export class BaseMeta {
 	public meta() {
 		return this._meta;
 	}
-	public get $hidden(): boolean {
-		return this._meta.$hidden;
+	public get isHidden(): boolean {
+		return _checkBool(this._meta.isHidden);
 	}
-	public set $hidden(value: boolean) {
+	public set isHidden(value: boolean) {
 		let that = this;
-		if (that._meta.$hidden !== value) {
-			that._meta.$hidden = value;
-			that.notify('$hidden');
+		if (_checkBool(that._meta.isHidden) !== value) {
+			that._meta.isHidden = value;
+			that.notify('isHidden');
 		}
 	}
-	public get $disabled(): boolean {
-		return this._meta.$disabled;
+	public get isDisabled(): boolean {
+		return _checkBool(this._meta.isDisabled);
 	}
 
-	public set $disabled(value: boolean) {
+	public set isDisabled(value: boolean) {
 		let that = this;
-		if (that._meta.$disabled !== value) {
-			that._meta.$disabled == value;
-			that.notify('$disabled');
+		if (_checkBool(that._meta.isDisabled) !== value) {
+			that._meta.isDisabled == value;
+			that.notify('isDisabled');
 		}
 	}
 
 };
+
+
 export class MetaLink extends BaseMeta {
 	constructor(owner: ModelObject, propName: string, value: any) {
 		super(owner, propName, value);
@@ -85,38 +87,45 @@ export class MetaObject extends BaseMeta {
 		return this._$errors;
 	}
 }
+
+
 export class MetaProperty extends MetaObject {
 	constructor(owner: ModelObject, propName: string, value: any) {
 		super(owner, propName, value);
 	}
-
 	protected init() {
 		super.init();
 		let that = this;
-		that._meta.$mandatory = that._meta.$mandatory || false;
-		that._meta.$readOnly = that._meta.$readOnly || false;
+		that._meta.isMandatory = that._meta.isMandatory || false;
+		that._meta.isReadOnly = that._meta.isReadOnly || false;
 	}
-	public get $mandatory(): boolean {
-		return this._meta.$mandatory;
+	public get isMandatory(): boolean {
+		return _checkBool(this._meta.isMandatory);
 	}
 
-	public set $mandatory(value: boolean) {
+	public set isMandatory(value: boolean) {
 		let that = this;
-		if (that._meta.$mandatory !== value) {
-			that._meta.$mandatory = value;
-			that.notify('$mandatory');
+		if (_checkBool(that._meta.isMandatory) !== value) {
+			that._meta.isMandatory = value;
+			that.notify('isMandatory');
 		}
 	}
-	public get $readOnly(): boolean {
-		return this._meta.$readOnly;
+	public get isReadOnly(): boolean {
+		return _checkBool(this._meta.isReadOnly);
 	}
 
-	public set $readOnly(value: boolean) {
+	public set isReadOnly(value: boolean) {
 		let that = this;
-		if (that._meta.$readOnly !== value) {
-			that._meta.$readOnly = value;
-			that.notify('$readOnly');
+		if (_checkBool(that._meta.isReadOnly) !== value) {
+			that._meta.isReadOnly = value;
+			that.notify('isReadOnly');
 		}
 	}
 }
 
+
+function _checkBool(value?: boolean) {
+	if (value === undefined) return false
+	return value;
+
+}

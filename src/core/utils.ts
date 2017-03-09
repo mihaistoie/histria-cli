@@ -46,11 +46,6 @@ var
             return params[val] || '';
         });
     },
-    _createPromise = function (resolve: (value?: any | Thenable<any>) => void, reject: (error?: any) => void): Promise<any> {
-        let win: any = <any>window;
-        let p: any = (win.Promise ? win.Promise : (win.ES6Promise ? win.ES6Promise.Promise : null));
-        return <Promise<any>>new p(resolve, reject);
-    },
     _p8 = function (addSeparator: boolean): string {
         var p = (Math.random().toString(16) + '000000000').substr(2, 8);
         return addSeparator ? '-' + p.substr(0, 4) + '-' + p.substr(4, 4) : p;
@@ -96,13 +91,36 @@ var
         if (!o1 || !o2) return false;
         return _eq(o1, o2);
 
-    };
+    },
+    _showAndLogRules = false,
+    _logRule = (spaces: number, rule: any, trigger: string): void => {
+        if (_showAndLogRules) {
+            spaces = (spaces || 1) - 1;
+            let sSpaces = new Array(spaces).join('  ');
+            if (typeof rule === 'string')
+                console.log(_formatByPosition('{0}{1}".', sSpaces, rule));
+            else
+                console.log(_formatByPosition('{0}Rule: "{1} - {2}", triggered by "{3}".', sSpaces, rule.name, rule.description, trigger));
+        }
+    },
+    _showRules = (value?: boolean): boolean => {
+        if (value !== undefined) {
+            _showAndLogRules = value;
+        }
+        return _showAndLogRules;
+    }
+    ;
 
-export var createPromise = _createPromise;
 export var extend = _extend;
 export var uuid = _genUuid;
 export var allocId = _createID;
 export var equals = _equals;
+export var formatByPosition = _formatByPosition;
+export var formatByName = _formatByName;
+
+export var logRule = _logRule;
+export var showRules = _showRules;
+
 
 
 

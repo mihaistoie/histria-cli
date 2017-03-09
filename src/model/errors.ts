@@ -1,7 +1,6 @@
-
+//OK
 import * as utils from '../core/utils';
-import {ModelObject}  from './interfaces';
-
+import { ModelObject } from './interfaces';
 
 export const AlertType = {
     Error: 0,
@@ -35,6 +34,9 @@ export class Errors {
             that.notify();
         }
     }
+    public clearErrors() {
+        this.clear(true);
+    }
     public clear(notify: boolean): boolean {
         var that = this;
         if (that._errors.length) {
@@ -53,6 +55,7 @@ export class Errors {
         let that = this;
         that._addErrors([{ severity: AlertType.Error, message: message }], true);
     }
+    
     public addSuccess(message: string) {
         let that = this;
         that._addErrors([{ severity: AlertType.Success, message: message }], true);
@@ -60,6 +63,19 @@ export class Errors {
     public addWarning(message: string) {
         let that = this;
         that._addErrors([{ severity: AlertType.Warning, message: message }], true);
+    }
+    public rmvError(message: string): void {
+        let that = this;
+        if (that._errors && that._errors.length) {
+            let ii = that._errors.findIndex(error => {
+                return error.severity === AlertType.Error && error.message === message;
+            });
+            if (ii >= 0) {
+                that._errors.splice(ii, 1);
+                that.notify();
+            }
+
+        }
     }
 
 }
