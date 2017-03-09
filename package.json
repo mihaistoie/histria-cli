@@ -12,31 +12,27 @@
   "repository": {},
   "bugs": {},
   "devDependencies": {
-    "@types/es6-collections": "latest",
-    "@types/es6-promise": "latest",
-    "@types/jquery": "latest",
-    "bower": "latest",
-    "browserify": "^13.3.0",
-    "chai": "latest",
-    "del": "latest",
+    "@types/mocha": "latest",
+    "@types/node": "latest",
+    "@types/power-assert": "latest",
+    "typescript": "2.x.x",
     "gulp": "latest",
+    "mocha": "latest",
+    "del": "latest",
+    "gulp-typescript": "latest",
+    "browserify": "latest",
+    "chai": "latest",
     "gulp-concat": "latest",
     "gulp-rename": "latest",
     "gulp-sourcemaps": "latest",
-    "gulp-typescript": "latest",
     "gulp-uglify": "latest",
-    "dts-bundle": "latest",
-    "run-sequence": "latest",
+    "source-map-support": "latest",
     "merge2": "latest",
-    "mocha": "latest",
-    "tsify": "^3.0.0",
-    "typescript": "2.x.x",
-    "typings": "latest",
-    "vinyl-source-stream": "^1.1.0"
+    "tsify": "latest",
+    "vinyl-source-stream": "latest"
   },
+  "types": "./definitions/index.d.ts",
   "scripts": {
-    "pretest": "tsc test/modules/utils.test.ts --module commonjs --target es5",
-    "test": "mocha test/**/*.test.js",
-    "posttest": "gulp clean"
+    "test": "mocha test/**/*.specs.js"
   }
 }

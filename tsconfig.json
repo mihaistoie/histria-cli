@@ -6,9 +6,7 @@
         "experimentalDecorators": true,
         "moduleResolution": "node",
         "noImplicitAny": true,
-        "rootDir": ".",
         "sourceMap": true,
-        "outDir": "./lib",
-        "target": "es5"
+        "target": "es6"
     }
 }
