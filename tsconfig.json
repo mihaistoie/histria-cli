@@ -4,9 +4,9 @@
         "declaration": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "moduleResolution": "node",
         "noImplicitAny": true,
         "sourceMap": true,
+        "module": "commonjs",
         "target": "es6"
     }
 }
