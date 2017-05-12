@@ -37,7 +37,7 @@
         {
             "type": "cell",
             "options": {
-                "size": 9
+                "size": 8
             }
             "items": []
         },
@@ -48,6 +48,24 @@
                 "size": 4
             }
             
+        }
+    ]
+}
+```
+
+### Layout Tabs
+
+```application/json
+{
+    "type": "tabs",
+    "items": [
+        {
+            "type": "tab",
+            "items": []
+        },
+        {
+            "type": "tab",
+            "items": []
         }
     ]
 }
