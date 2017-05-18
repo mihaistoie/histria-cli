@@ -5,6 +5,8 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noImplicitReturns": true,
         "sourceMap": true,
         "module": "commonjs",
         "target": "es6"

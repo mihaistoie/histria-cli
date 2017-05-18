@@ -144,7 +144,7 @@ var
     },
     _execValidationRules = (inst: ObjectModel): boolean => {
         let className = inst.$schema.name;
-        if (!className) return;
+        if (!className) return false;
         let root = <ObjectModel>inst.getRoot();
         let rootSchema = root.$schema;
         if (!rootSchema.rules || !rootSchema.rules.validation || !rootSchema.rules.validation[className])

@@ -46,14 +46,14 @@ export class ObjectModel extends BaseModel {
             obj._createErrorProperty(propertyName);
         Object.defineProperty(obj, propertyName, {
             get: function (): any {
-                let that: ObjectModel = this;
+                let that: ObjectModel = obj;
                 let ref = that._children[propertyName];
                 if (ref)
                     return ref;
                 return that._model[propertyName];
             },
             set: function (value: any): void {
-                let that: ObjectModel = this;
+                let that: ObjectModel = obj;
                 let oldValue = that._model[propertyName];
                 if (oldValue !== value || !that._initialized[propertyName]) {
                     const cschema = that._schema.properties[propertyName];
@@ -83,7 +83,7 @@ export class ObjectModel extends BaseModel {
     private _isRecursiveRule(propertyName: string): boolean {
         let that = this;
         let root = <ObjectModel>that.getRoot();
-        if (!root._stack) return;
+        if (!root._stack) return false;
         let path = that._getPropertyPath(propertyName);
         if (root._stack.indexOf(path) >= 0) {
             utils.logRule(root._stack.length, 'Recursive rule detected: property: ' + path, path);

@@ -293,7 +293,7 @@ var
 
 	_validateSchema = (value: any, schema: any, rootSchema: any, state: any, errors: Errors): boolean => {
 		let res = true;
-		if (!schema) return;
+		if (!schema) return false;
 		if (state) {
 			if (state.isHidden || state.isDisabled)
 				return res;
